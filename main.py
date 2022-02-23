@@ -1,4 +1,5 @@
 # Python 3.10.1
+from ast import Num
 from tabulate import tabulate
 
 Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -14,18 +15,18 @@ def TicketPrices():
     # Reorganised price data into 2D arrays
     Data = []
     for i in range(len(Days) - 1):
-        n = [TicketType[i], TicketTypeOneDay[i], TicketTypeTwoDays[i]]
+        n = [i + 1, TicketType[i], TicketTypeOneDay[i], TicketTypeTwoDays[i]]
         Data.append(n)
     
-    print("\n", tabulate(Data , headers = ["Ticket type", "One day", "Two days"]), "\n")
+    print("\n", tabulate(Data , headers = ["Input number", "Ticket type", "One day", "Two days"]), "\n")
 
     # Reorganised attraction price data into 2D arrays
     Data = []
-    for i in range(len(AttractionPrice) - 1):
-        n = [AttractionType[i], AttractionPrice[i]]
+    for i in range(len(AttractionPrice)):
+        n = [i + 1, AttractionType[i], AttractionPrice[i]]
         Data.append(n)
 
-    print("\n", tabulate(Data, headers = ["Extra attractions", "Cost per person"]), "\n")
+    print("\n", tabulate(Data, headers = ["Input number", "Extra attractions", "Cost per person"]), "\n")
     
     # Days reorgs
     Data = []
@@ -38,6 +39,8 @@ def TicketPrices():
 TicketPrices()
 
 def TicketBooking():
+    NumDays = int(input("Please input the number of days (1/2): "))
+
     PurchaseTickets = []
     while True:
         PurchaseTickets.append(input("Please enter desired ticket for purchase: ")) 
@@ -45,11 +48,18 @@ def TicketBooking():
         if Finished.lower() == "y":
             break
     
-    AttractionTickets = []
-    while True:
-        AttractionTickets.append(input("Please enter desired attractions for purchase: "))
-        Finished = input("Finished? Y/N :")
-        if Finished.lower() == "y":
-            break
+    # AttractionTickets = []
+    # while True:
+    #     AttractionTickets.append(input("Please enter desired attractions for purchase: "))
+    #     Finished = input("Finished? Y/N :")
+    #     if Finished.lower() == "y":
+    #         break
+
+    if NumDays == 2:
+        for i in range(len(PurchaseTickets)):
+            Total = str(PurchaseTickets[i]) * TicketTypeTwoDays[str(PurchaseTickets[i])]
+        
+        print(Total)
+
 
 TicketBooking()
