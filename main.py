@@ -43,23 +43,36 @@ def TicketBooking():
 
     PurchaseTickets = []
     while True:
-        PurchaseTickets.append(input("Please enter desired ticket for purchase: ")) 
+        PurchaseTickets.append(int(input("Please enter desired ticket for purchase: ")))
         Finished = input("Finished? Y/N :")
         if Finished.lower() == "y":
             break
     
-    # AttractionTickets = []
-    # while True:
-    #     AttractionTickets.append(input("Please enter desired attractions for purchase: "))
-    #     Finished = input("Finished? Y/N :")
-    #     if Finished.lower() == "y":
-    #         break
-
+    AttractionTickets = []
+    while True:
+        AttractionTickets.append(int(input("Please enter desired attractions for purchase: ")))
+        Finished = input("Finished? Y/N :")
+        if Finished.lower() == "y":
+            break
+    
     if NumDays == 2:
+        Total = 0
         for i in range(len(PurchaseTickets)):
-            Total = str(PurchaseTickets[i]) * TicketTypeTwoDays[str(PurchaseTickets[i])]
-        
-        print(Total)
+            Total = Total + (TicketTypeTwoDays[PurchaseTickets[i] - 1])
 
+        print("Total ticket price: $" + Total)
+
+    else:
+        Total = 0
+        for i in range(len(PurchaseTickets)):
+            Total = Total + (TicketTypeOneDay[PurchaseTickets[i] - 1])
+
+        print("Total ticket price: $" + Total)
+
+    Total = 0 
+    for i in range(len(AttractionTickets)):
+        Total = Total + (AttractionPrice[AttractionTickets[i] - 1])
+
+        print("Total attraction price: $" + Total) 
 
 TicketBooking()
