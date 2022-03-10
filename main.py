@@ -1,5 +1,6 @@
 # Python 3.10.1
 from random import randint
+from matplotlib.axis import Tick
 from tabulate import tabulate
 
 Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -41,23 +42,57 @@ TicketPrices()
 def TicketBooking():
     NumDays = int(input("Please input the number of days (1/2): "))
 
-    PurchaseTickets = []
     AttractionTickets = []
 
+    # Gets inputs from user
     while True:
-        DummyVar = []
-        DummyVar.append(int(input("Please input the desired ticket type: ")))
-        DummyVar.append(int(input("Please input the numbers wanted: ")))
-        PurchaseTickets.append(DummyVar)
-        Finished = str(input("Finished? (y/n): "))
-        if Finished.lower() == "y":
-            break 
+        Adults = int("Please input the number of adults: ")
+        Children = int("Please input the number of children: ")
+        Elders = int("Please input the number of elders: ")
+        if Children > 2 * Adults:
+            break
+        else:
+            print("Not enough adults for children. Please retry.")
 
+    Total = 0
+    SixOrMoreTotal = 0
+    FamilyTotal = 0
+    NormalTotal = 0 
+
+    # One-day prices
+    if NumDays == 1:
+        # Calculate "normal" ticket prices
+        NormalTotal = Adults * TicketTypeOneDay[0] + Children * TicketTypeOneDay[1] + Elders * TicketTypeOneDay[2]
+
+        # Group of six for 1 day
+        if Adults + Elders + Children >= 6:
+            SixOrMoreTotal = SixOrMoreTotal + (TicketTypeOneDay[4] * (Adults + Elders + Children))
+        
+        # Family of 2 adults/elders and 3 children (perfect family ticket type)
+        elif Adults + Elders % 2 == 0 and Children % 3 == 0:
+            FamilyTotal = (int(Adults + Elders / 2)) * TicketTypeOneDay[3] 
+
+        # Family of >2 adults/elders or >3 children (imperfect family ticket type)  
+        elif Adults + Elders % 2 != 0 or Children % 3 != 0:
+            Zeroer = lambda a: int(abs(a) + a)/2 # Lambda function returns a zero if number is negative
+            FamilyTotal = FamilyTotal + ((Zeroer(Adults) % 2) * TicketTypeOneDay[0] + (Zeroer(Elders) % 2) * TicketTypeOneDay[2]) + Zeroer(Children) * TicketTypeOneDay[1] + (int(Adults + Elders / 2)) * TicketTypeOneDay[3] 
+
+        # Codeblock for getting the best prices
+        if NormalTotal > FamilyTotal or SixOrMoreTotal:
+            if SixOrMoreTotal > FamilyTotal:
+                Total = FamilyTotal
+            elif FamilyTotal < SixOrMoreTotal:
+                Total = SixOrMoreTotal
+        else: 
+            Total = NormalTotal
+
+    # Function for attraction prices calculator 
     while True:
         AttractionsBool = input("Extra attractions? (y/n): ")
         if AttractionsBool.lower() == "n":
             break
 
+        # Creates a 2D array of desired tickets for looping and calculating
         DummyVar = []
         DummyVar.append(int(input("Please input the desired attraction tickets: ")))
         DummyVar.append(int(input("Please input the amount wanted: ")))
@@ -65,16 +100,8 @@ def TicketBooking():
         Finished = str(input("Finished? (y/n): "))
         if Finished.lower() == "y":
             break 
-
-    Total = 0 
-    if NumDays == 1:
-        for i in range(len(PurchaseTickets)):
-            Total = Total + (PurchaseTickets[i][1] * TicketTypeOneDay[PurchaseTickets[i][0] - 1])
-
-    elif NumDays == 2:
-        for i in range(len(PurchaseTickets)):
-            Total = Total + (PurchaseTickets[i][1] * TicketTypeTwoDays[PurchaseTickets[i][0] - 1])
-
+    
+    # Tallies the total number of wanted attraction tickets
     if AttractionsBool == "y":
         AttractionTotal = 0
         for i in range(len(AttractionTickets)):
@@ -85,3 +112,4 @@ def TicketBooking():
     print("Your order ID is %s with a total of $%s." % (UniqueID, BookingTotal))
 
 TicketBooking()
+
