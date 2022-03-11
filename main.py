@@ -1,5 +1,6 @@
 # Python 3.10.1
 from random import randint
+import numpy
 from tabulate import tabulate
 
 Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -30,7 +31,7 @@ def TicketPrices():
     
     # Days reorgs
     Data = []
-    for i in range(len(Days) - 1):
+    for i in range(len(Days)):
         n = [i + 1, Days[i]]
         Data.append(n)
 
@@ -60,52 +61,41 @@ def TicketBooking():
 
     # One-day prices
     if NumDays == 1:
-        # Calculate "normal" ticket prices
-        NormalTotal = Adults * TicketTypeOneDay[0] + Children * TicketTypeOneDay[1] + Elders * TicketTypeOneDay[2]
-        print(str(NormalTotal) + " normal")
+        UsedListPrices = TicketTypeOneDay
+    if NumDays == 2:
+        UsedListPrices = TicketTypeTwoDays
+    
+    # Calculate "normal" ticket prices
+    NormalTotal = Adults * UsedListPrices[0] + Children * UsedListPrices[1] + Elders * UsedListPrices[2]
 
-        # Family of 2 adults/elders and 3 children (perfect family ticket type)
-        if (Adults and Elders > 2) and (Children >= 3) and ((Adults + Elders) % 2 == 0) and (Children % 3 == 0):
-            FamilyTotal = ((Adults + Elders + Children) / 5) * TicketTypeOneDay[3] 
-            print(str(FamilyTotal) + " perfect")
+    # Family of 2 adults/elders and 3 children (perfect family ticket type)
+    if (Adults and Elders > 2) and (Children >= 3) and ((Adults + Elders) % 2 == 0) and (Children % 3 == 0):
+        FamilyTotal = ((Adults + Elders + Children) / 5) * UsedListPrices[3] 
 
-        # Family of >2 adults/elders or >3 children (imperfect family ticket type)  
-        if (((Adults + Elders) % 2) != 0) or (Children % 3 != 0):
-            Zeroer = lambda a: int(abs(a) + a)/2 # Lambda function returns a zero if number is negative
+    # Family of >2 adults/elders or >3 children (imperfect family ticket type)  
+    if (((Adults + Elders) % 2) != 0) or (Children % 3 != 0):
+        Zeroer = lambda a: int(abs(a) + a)/2 # Lambda function returns a zero if number is negative
 
-            # Finds the perfect number of tickets through floor division
-            NumberOfPerfectTickets = 0
-            if (Adults + Elders) // 2 < Children // 3:
-                NumberOfPerfectTickets = int((Adults + Elders) // 2)
-            else:
-                NumberOfPerfectTickets = int(Children // 3)
+        # Finds the perfect number of tickets through floor division
+        NumberOfPerfectTickets = 0
+        if (Adults + Elders) // 2 < Children // 3:
+            NumberOfPerfectTickets = int((Adults + Elders) // 2)
+        else:
+            NumberOfPerfectTickets = int(Children // 3)
 
-            # Add perfect number of tickets with imperfect/standalone tickets
-            # Zeroer zeroes negative values, eg. if no of elders - perfect tickets < 0, value returned is 0
-            FamilyTotal = (NumberOfPerfectTickets * TicketTypeOneDay[3]) + (Zeroer(Adults - (NumberOfPerfectTickets * 2)) * TicketTypeOneDay[0]) + (Zeroer(Children - (NumberOfPerfectTickets * 3)) * TicketTypeOneDay[1]) + (Zeroer(Elders - (NumberOfPerfectTickets * 2)) * TicketTypeOneDay[2])
-            print(str(FamilyTotal) + " imperfect")
+        # Add perfect number of tickets with imperfect/standalone tickets
+        # Zeroer zeroes negative values, eg. if no of elders - perfect tickets < 0, value returned is 0
+        FamilyTotal = (NumberOfPerfectTickets * UsedListPrices[3]) + (Zeroer(Adults - (NumberOfPerfectTickets * 2)) * UsedListPrices[0]) + (Zeroer(Children - (NumberOfPerfectTickets * 3)) * UsedListPrices[1]) + (Zeroer(Elders - (NumberOfPerfectTickets * 2)) * UsedListPrices[2])
 
-        # Group of six for 1 day
-        if Adults + Elders + Children >= 6:
-            SixOrMoreTotal = SixOrMoreTotal + (TicketTypeOneDay[4] * (Adults + Elders + Children))
-            print(str(SixOrMoreTotal) + " six or more")
+    # Group of six for 1 day
+    if Adults + Elders + Children >= 6:
+        SixOrMoreTotal = SixOrMoreTotal + (UsedListPrices[4] * (Adults + Elders + Children))
 
-        # Codeblock for getting the best prices
-        FamilyTotal
-        SixOrMoreTotal
-        NormalTotal
-
-        if (SixOrMoreTotal < NormalTotal):
-            Total = SixOrMoreTotal
-        if (FamilyTotal < NormalTotal):
-            Total = FamilyTotal
-        if ((SixOrMoreTotal > NormalTotal) and (FamilyTotal > NormalTotal)):
-            Total = NormalTotal
-        if ((SixOrMoreTotal == 0) and (FamilyTotal == 0)):
-            Total = NormalTotal
-
-        print(Total)
-     
+    # Codeblock for getting the best prices
+    ArrayOfPrices = numpy.array([NormalTotal, FamilyTotal, SixOrMoreTotal])
+    ArrayOfPrices.sort()
+    ArrayOfPrices = ArrayOfPrices[ArrayOfPrices != 0]
+    Total = ArrayOfPrices.min()
 
     # Function for attraction prices calculator 
     while True:
