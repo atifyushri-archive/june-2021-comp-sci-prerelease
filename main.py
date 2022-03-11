@@ -69,7 +69,7 @@ def TicketBooking():
     NormalTotal = Adults * UsedListPrices[0] + Children * UsedListPrices[1] + Elders * UsedListPrices[2]
 
     # Family of 2 adults/elders and 3 children (perfect family ticket type)
-    if (Adults and Elders >= 2) and (Children >= 3) and ((Adults + Elders) % 2 == 0) and (Children % 3 == 0):
+    if (Adults + Elders >= 2) and (Children >= 3) and ((Adults + Elders) % 2 == 0) and (Children % 3 == 0):
         FamilyTotal = ((Adults + Elders + Children) / 5) * UsedListPrices[3] 
 
     # Family of >2 adults/elders or >3 children (imperfect family ticket type)  
