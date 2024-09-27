@@ -49,7 +49,7 @@ def TicketBooking():
         Adults = int(input("Please input the number of adults: "))
         Children = int(input("Please input the number of children: "))
         Elders = int(input("Please input the number of elders: "))
-        if Children =< 2 * Adults:
+        if Children <= 2 * Adults:
             break
         else:
             print("Not enough adults for children. Please retry.")
